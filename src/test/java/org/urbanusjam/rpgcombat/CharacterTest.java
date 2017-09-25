@@ -9,8 +9,8 @@ import static org.hamcrest.Matchers.is;
 
 public class CharacterTest {
 
-    private Character attacker;
-    private Character target;
+    private MeleeFighter attacker;
+    private RangeFighter target;
 
     @Before
     public void setUp() {
@@ -19,44 +19,44 @@ public class CharacterTest {
     }
 
     @Test
-    public void whenCharacterIsCreatedThenHealthStartsAt1000(){
+    public void whenCharacterIsCreatedThenHealthStartsAt1000() {
         assertThat(attacker.getHealth(), is(1000));
     }
 
     @Test
-    public void whenCharacterIsCreatedThenLevelStartsAt1(){
+    public void whenCharacterIsCreatedThenLevelStartsAt1() {
         assertThat(attacker.getLevel(), is(1));
     }
 
     @Test
-    public void whenCharacterIsCreatedThenIsAlive(){
+    public void whenCharacterIsCreatedThenIsAlive() {
         assertThat(attacker.isAlive(), is(true));
     }
 
     @Test
-    public void whenCharacterDealsDamageAndDamageIsLowerThanCurrentHealthThenDamageIsSubtractedFromHealth() {
-        attacker.applyDamage(target, 100);
+    public void whenCharacterAppliesDamageAndDamageIsLowerThanCurrentHealthThenDamageIsSubtractedFromHealth() {
+        attacker.damage(target, 100);
         assertThat(target.getHealth(), is(900));
     }
 
     @Test
-    public void whenCharacterDealsDamageAndDamageExceedsCurrentHealthThenHealthIs0AndCharacterDies() {
-        target.applyDamage(attacker, 2000);
-        assertThat(attacker.getHealth(), is(0));
-        assertThat(attacker.isAlive(), is(false));
+    public void whenCharacterAppliesDamageAndDamageExceedsCurrentHealthThenHealthIs0AndCharacterDies() {
+        attacker.damage(target, 2000);
+        assertThat(target.getHealth(), is(0));
+        assertThat(target.isAlive(), is(false));
     }
 
     @Test
     public void whenCharacterHealsAndIsAliveThenCurrentHealthIncreasesByTheAmountOfHealReceived() {
-        target.applyDamage(attacker, 100);
+        target.damage(attacker, 100);
         assertThat(attacker.getHealth(), is(900));
         attacker.heal(attacker, 100);
         assertThat(attacker.getHealth(), is(1000));
     }
 
     @Test
-    public void whenCharacterHealsAndIsAliveAndNewHealthIsAbove1000ThenHealthIsSetTo1000() {
-        target.applyDamage(attacker, 100);
+    public void whenCharacterHealsAndIsAliveAndNewHealthIsAbove1000ThenHealthIs1000() {
+        target.damage(attacker, 100);
         assertThat(attacker.getHealth(), is(900));
         attacker.heal(attacker, 900);
         assertThat(attacker.getHealth(), is(1000));
@@ -64,13 +64,13 @@ public class CharacterTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void whenCharacterHealedAndIsDeadThenCharacterCannotBeHealed() {
-        target.applyDamage(attacker, 2000);
+        target.damage(attacker, 2000);
         attacker.heal(attacker, 100);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void whenCharacterDamagesHimselfThenDamageCannotBeDone() {
-        attacker.applyDamage(attacker, 100);
+        attacker.damage(attacker, 100);
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -79,30 +79,30 @@ public class CharacterTest {
     }
 
     @Test
-    public void whenTargetIsExactly5LevelsAboveAttackerThenDamageIsReducedBy50Percent () {
+    public void whenTargetIsExactly5LevelsAboveAttackerThenDamageIsReducedBy50Percent() {
         target.setLevel(10);
-        attacker.applyDamage(target, 100);
+        attacker.damage(target, 100);
         assertThat(target.getHealth(), is(950));
     }
 
     @Test
-    public void whenTargetIsMoreThan5LevelsAboveAttackerThenDamageIsReducedBy50Percent () {
+    public void whenTargetIsMoreThan5LevelsAboveAttackerThenDamageIsReducedBy50Percent() {
         target.setLevel(6);
-        attacker.applyDamage(target, 100);
+        attacker.damage(target, 100);
         assertThat(target.getHealth(), is(950));
     }
 
     @Test
-    public void whenTargetIsExactlyThan5LevelsBelowAttackerThenDamageIsReducedBy50Percent () {
+    public void whenTargetIsExactlyThan5LevelsBelowAttackerThenDamageIsReducedBy50Percent() {
         attacker.setLevel(10);
-        attacker.applyDamage(target, 100);
+        attacker.damage(target, 100);
         assertThat(target.getHealth(), is(850));
     }
 
     @Test
-    public void whenTargetIsMoreThan5LevelsBelowAttackerThenDamageIsReducedBy50Percent () {
+    public void whenTargetIsMoreThan5LevelsBelowAttackerThenDamageIsReducedBy50Percent() {
         attacker.setLevel(6);
-        attacker.applyDamage(target, 100);
+        attacker.damage(target, 100);
         assertThat(target.getHealth(), is(850));
     }
 
@@ -119,13 +119,13 @@ public class CharacterTest {
     @Test
     public void whenCharacterTriesToDealDamageInsideRangeThenDamageIsApplied() {
         target.setCurrentDistance(1);
-        attacker.applyDamage(target, 100);
+        attacker.damage(target, 100);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void whenCharacterTriesToDealDamageOutsideRangeThenDamageCannotBeApplied() {
         target.setCurrentDistance(50);
-        attacker.applyDamage(target, 100);
+        attacker.damage(target, 100);
     }
 
     @After
