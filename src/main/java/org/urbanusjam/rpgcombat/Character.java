@@ -91,31 +91,31 @@ public abstract class Character implements Ability {
         return targetLevel - this.level;
     }
 
-    protected int getHealth() {
+    public int getHealth() {
         return health;
     }
 
-    protected void setHealth(int health) {
+    public void setHealth(int health) {
         this.health = health;
     }
 
-    protected int getLevel() {
+    public int getLevel() {
         return level;
     }
 
-    protected void setLevel(int level) {
+    public void setLevel(int level) {
         this.level = level;
     }
 
-    protected boolean isAlive() {
+    public boolean isAlive() {
         return alive;
     }
 
-    protected void setAlive(boolean alive) {
+    public void setAlive(boolean alive) {
         this.alive = alive;
     }
 
-    protected int getAttackRange() {
+    public int getAttackRange() {
         return attackRange;
     }
 
@@ -123,11 +123,11 @@ public abstract class Character implements Ability {
         throw new UnsupportedOperationException("The character's attack range cannot be modified");
     }
 
-    protected int getCurrentDistance() {
+    public int getCurrentDistance() {
         return currentDistance;
     }
 
-    protected void setCurrentDistance(int currentDistance) {
+    public void setCurrentDistance(int currentDistance) {
         this.currentDistance = currentDistance;
     }
 
