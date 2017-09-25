@@ -14,20 +14,9 @@ public class CharacterTest {
 
     @Before
     public void setUp() {
-        attacker = new Character();
-        target = new Character();
+        attacker = new MeleeFighter();
+        target = new RangeFighter();
     }
-
-    //1. All Characters, when created, have:
-    //   - Health, starting at 1000
-    //   - Level, starting at 1
-    //   - May be Alive or Dead, starting Alive (Alive may be a true/false)
-    //2. Characters can Deal Damage to Characters.
-    //   - Damage is subtracted from Health
-    //   - When damage received exceeds current Health, Health becomes 0 and the character dies
-    //3. A Character can Heal a Character.
-    //   - Dead characters cannot be healed
-    //   - Healing cannot raise health above 1000
 
     @Test
     public void whenCharacterIsCreatedThenHealthStartsAt1000(){
@@ -61,7 +50,6 @@ public class CharacterTest {
     public void whenCharacterHealsAndIsAliveThenCurrentHealthIncreasesByTheAmountOfHealReceived() {
         target.applyDamage(attacker, 100);
         assertThat(attacker.getHealth(), is(900));
-
         attacker.heal(attacker, 100);
         assertThat(attacker.getHealth(), is(1000));
     }
@@ -70,22 +58,15 @@ public class CharacterTest {
     public void whenCharacterHealsAndIsAliveAndNewHealthIsAbove1000ThenHealthIsSetTo1000() {
         target.applyDamage(attacker, 100);
         assertThat(attacker.getHealth(), is(900));
-
         attacker.heal(attacker, 900);
         assertThat(attacker.getHealth(), is(1000));
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    public void whenCharacterIsHealedAndDeadThenCharacterCannotBeHealed() {
+    public void whenCharacterHealedAndIsDeadThenCharacterCannotBeHealed() {
         target.applyDamage(attacker, 2000);
         attacker.heal(attacker, 100);
     }
-
-    //1. The Character can deal damage to his enemies, but not to himself.
-    //2. The Character can heal himself, but not his enemies.
-    //3. The level now has an effect on the damage applied:
-    //   - If the target is 5 or more levels above the attacker, Damage is reduced by 50%
-    //   - If the target is 5 or more levels below the attacker, Damage is increased by 50%
 
     @Test(expected = UnsupportedOperationException.class)
     public void whenCharacterDamagesHimselfThenDamageCannotBeDone() {
@@ -98,17 +79,53 @@ public class CharacterTest {
     }
 
     @Test
-    public void whenTargetIsFiveOrMoreLevelsAboveAttackerThenDamageIsReducedBy50Percent () {
+    public void whenTargetIsExactly5LevelsAboveAttackerThenDamageIsReducedBy50Percent () {
+        target.setLevel(10);
+        attacker.applyDamage(target, 100);
+        assertThat(target.getHealth(), is(950));
+    }
+
+    @Test
+    public void whenTargetIsMoreThan5LevelsAboveAttackerThenDamageIsReducedBy50Percent () {
         target.setLevel(6);
         attacker.applyDamage(target, 100);
         assertThat(target.getHealth(), is(950));
     }
 
     @Test
-    public void whenTargetIsFiveOrMoreLevelsBelowAttackerThenDamageIsIncreasedBy50Percent () {
+    public void whenTargetIsExactlyThan5LevelsBelowAttackerThenDamageIsReducedBy50Percent () {
+        attacker.setLevel(10);
+        attacker.applyDamage(target, 100);
+        assertThat(target.getHealth(), is(850));
+    }
+
+    @Test
+    public void whenTargetIsMoreThan5LevelsBelowAttackerThenDamageIsReducedBy50Percent () {
         attacker.setLevel(6);
         attacker.applyDamage(target, 100);
         assertThat(target.getHealth(), is(850));
+    }
+
+    @Test
+    public void whenCharacterIsMeleeFighterThenAttackRangeIs2Meters() {
+        assertThat(attacker.getAttackRange(), is(2));
+    }
+
+    @Test
+    public void whenCharacterIsRangeFighterThenAttackRangeIs20Meters() {
+        assertThat(target.getAttackRange(), is(20));
+    }
+
+    @Test
+    public void whenCharacterTriesToDealDamageInsideRangeThenDamageIsApplied() {
+        target.setCurrentDistance(1);
+        attacker.applyDamage(target, 100);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void whenCharacterTriesToDealDamageOutsideRangeThenDamageCannotBeApplied() {
+        target.setCurrentDistance(50);
+        attacker.applyDamage(target, 100);
     }
 
     @After
